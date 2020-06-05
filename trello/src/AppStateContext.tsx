@@ -1,33 +1,57 @@
 import React, { createContext, useReducer, useContext } from "react"
+import { v4 as uuid } from 'uuid';
+import { AppState } from "./App"
+import { findItemIndexById } from "./utils/findItemByIndex"
 
-interface Task {
-    id: string
-    text: string
-}
-
-interface List {
-    id: string
-    text: string
-    tasks: Task[]
-}
-
-interface AppState {
-    lists: List[]
-}
-
-interface AppState {
-    lists: List[]
-}
+type Action =
+    | {
+        type: "ADD_LIST"
+        payload: string
+    }
+    | {
+        type: "ADD_TASK"
+        payload: { text: string; taskId: string }
+    }
 
 interface AppStateContextProps {
     state: AppState
+    dispatch: React.Dispatch<any>
 }
 
 const AppStateContext = createContext<AppStateContextProps>(
     {} as AppStateContextProps
 )
 
-const appStateReducer = (state: AppState, action: any): AppState => state
+const appStateReducer = (state: AppState, action: any): AppState => {
+    switch (action.type) {
+        case "ADD_LIST": {
+            return {
+                ...state,
+                lists: [
+                    ...state.lists,
+                    { id: uuid(), text: action.payload, tasks: [] }
+                ]
+            }
+        }
+        case "ADD_TASK": {
+            const targetLaneIndex = findItemIndexById(
+                state.lists,
+                action.payload.taskId
+            )
+            state.lists[targetLaneIndex].tasks.push({
+                id: uuid(),
+                text: action.payload.text
+            })
+
+            return {
+                ...state
+            }
+        }
+        default: {
+            return state
+        }
+    }
+}
 
 const appData: AppState = {
     lists: [
@@ -50,8 +74,10 @@ const appData: AppState = {
 }
 
 export const AppStateProvider = ({ children }: React.PropsWithChildren<{}>) => {
+    const [state, dispatch] = useReducer(appStateReducer, appData)
+
     return (
-        <AppStateContext.Provider value={{ state: appData }}>
+        <AppStateContext.Provider value={{ state, dispatch }}>
             {children}
         </AppStateContext.Provider>
     )
