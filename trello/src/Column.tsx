@@ -12,13 +12,15 @@ interface ColumnProps {
     text: string
     id: string
     index: number
+    isPreview?: boolean
 }
 
 
 export const Column = ({
     text,
     index,
-    id
+    id,
+    isPreview
 }: React.PropsWithChildren<ColumnProps>) => {
     const { state, dispatch } = useAppState()
     const ref = useRef<HTMLDivElement>(null)
@@ -44,7 +46,7 @@ export const Column = ({
     drag(drop(ref))
 
     return (
-        <ColumnContainer ref={ref} isHidden={isHidden(state.draggedItem, "COLUMN", id)}>
+        <ColumnContainer isPreview={isPreview} ref={ref} isHidden={isHidden(isPreview, state.draggedItem, "COLUMN", id)}>
             <ColumnTitle>{text}</ColumnTitle>
             {state.lists[index].tasks.map((task, i) => (
                 <Card text={task.text} key={task.id} index={i} />
