@@ -16,9 +16,8 @@ interface DragPreviewContainerProps {
 }
 
 export const DragPreviewContainer = styled.div<DragPreviewContainerProps>`
-transform: ${props => (props.isPreview ? "rotate(5deg)" : undefined)};
-// opacity: ${props => (props.isHidden ? 0 : 1)};
-opacity: ${props => (props.isHidden ? 0.3 : 1)};
+  transform: ${props => (props.isPreview ? "rotate(5deg)" : undefined)};
+  opacity: ${props => (props.isHidden ? 0 : 1)};
 `
 
 export const ColumnContainer = styled(DragPreviewContainer)`
@@ -29,6 +28,7 @@ export const ColumnContainer = styled(DragPreviewContainer)`
   border-radius: 3px;
   padding: 8px 8px;
   flex-grow: 0;
+  flex-shrink: 0;
 `
 
 export const ColumnTitle = styled.div`
@@ -92,6 +92,7 @@ export const NewItemButton = styled.button`
   padding: 6px 12px;
   text-align: center;
 `
+
 export const CustomDragLayerContainer = styled.div`
   height: 100%;
   left: 0;

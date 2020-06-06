@@ -1,9 +1,10 @@
 import React, { createContext, useReducer, useContext } from "react"
 import { v4 as uuid } from 'uuid';
-import { AppState } from "./App"
+import { AppState, List } from "./App"
 import { findItemIndexById } from "./utils/findItemByIndex"
 import { moveItem } from "./utils/moveItem"
 import { DragItem } from "./DragItem"
+
 
 type Action =
     | {
@@ -16,13 +17,22 @@ type Action =
     }
     | {
         type: "ADD_TASK"
-        payload: { text: string; taskId: string }
+        payload: { text: string; columnId: string }
     }
     | {
         type: "MOVE_LIST"
         payload: {
             dragIndex: number
             hoverIndex: number
+        }
+    }
+    | {
+        type: "MOVE_TASK"
+        payload: {
+            dragIndex: number
+            hoverIndex: number
+            sourceColumn: string
+            targetColumn: string
         }
     }
 
@@ -52,8 +62,9 @@ const appStateReducer = (state: AppState, action: any): AppState => {
         case "ADD_TASK": {
             const targetLaneIndex = findItemIndexById(
                 state.lists,
-                action.payload.taskId
+                action.payload.columnId
             )
+            console.log(targetLaneIndex)
             state.lists[targetLaneIndex].tasks.push({
                 id: uuid(),
                 text: action.payload.text
@@ -66,6 +77,19 @@ const appStateReducer = (state: AppState, action: any): AppState => {
         case "MOVE_LIST": {
             const { dragIndex, hoverIndex } = action.payload
             state.lists = moveItem(state.lists, dragIndex, hoverIndex)
+            return { ...state }
+        }
+        case "MOVE_TASK": {
+            const {
+                dragIndex,
+                hoverIndex,
+                sourceColumn,
+                targetColumn
+            } = action.payload
+            const sourceLaneIndex = findItemIndexById(state.lists, sourceColumn)
+            const targetLaneIndex = findItemIndexById(state.lists, targetColumn)
+            const item = state.lists[sourceLaneIndex].tasks.splice(dragIndex, 1)[0]
+            state.lists[targetLaneIndex].tasks.splice(hoverIndex, 0, item)
             return { ...state }
         }
         default: {
