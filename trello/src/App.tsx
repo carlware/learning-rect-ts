@@ -4,6 +4,7 @@ import { Card } from "./Card"
 import { AppContainer } from "./styles"
 import { AddNewItem } from "./AddNewItem"
 import { useAppState } from "./AppStateContext"
+import { DragItem } from "./DragItem"
 
 interface Task {
     id: string
@@ -18,6 +19,7 @@ interface List {
 }
 
 export interface AppState {
+    draggedItem: DragItem | undefined;
     lists: List[]
 }
 

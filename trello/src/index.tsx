@@ -4,13 +4,17 @@ import './index.css';
 import App from './App';
 import { AppStateProvider } from "./AppStateContext"
 import * as serviceWorker from './serviceWorker';
+import { DndProvider } from "react-dnd"
+import Backend from 'react-dnd-html5-backend'
 
 ReactDOM.render(
-    <React.StrictMode>
-        <AppStateProvider>
-            <App />
-        </AppStateProvider>,
-    </React.StrictMode>,
+    <DndProvider backend={Backend}>
+        <React.StrictMode>
+            <AppStateProvider>
+                <App />
+            </AppStateProvider>,
+        </React.StrictMode>
+    </DndProvider>,
     document.getElementById('root')
 );
 
